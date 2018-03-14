@@ -2,8 +2,139 @@
 <html>
 <head>
 	<title>Lab 2 - Jeopardy</title>
+	<link rel="stylesheet" type="text/css" href="css/jeopardy.css" media="none" onload="if(media!='all')media='all'">
+	<noscript><link rel="stylesheet" href="css/jeopardy.css"></noscript>
 </head>
 <body>
-	<h1>Hi again!</h1>
+	<h1>JEOPARDY!</h1>
+	<table id="game_table">
+		<thead>
+			<tr id="game_header">
+			</tr>
+		</thead>
+		<tbody id="game_body">
+			<tr id="game_boxes">
+			</tr>
+		</tbody>
+	</table>
+	<h3></h3>
+	<ul id="category_list">
+	</ul>
+
+	<script type="text/javascript">
+		function getData(URL) {
+			return new Promise(
+				(resolve, reject) => {
+					var xhr = new XMLHttpRequest();
+					xhr.addEventListener('load', 
+						function() {
+							if (xhr.status = 200) {
+								resolve(xhr.response);
+								console.log(xhr.response);
+								printCategories(xhr.response);
+							}
+							else {
+								reject (
+									Error (
+										xhr.statusText
+									)
+								);
+							}
+						}
+					)
+					xhr.addEventListener('error',
+						function() {
+							reject(
+								Error('Network Error')
+							)
+						}
+					)
+					xhr.open('GET', URL);
+					xhr.send();
+				}
+			)
+		};
+		function getData2(URL) {
+			return new Promise(
+				(resolve, reject) => {
+					var xhr = new XMLHttpRequest();
+					xhr.addEventListener('load', 
+						function() {
+							if (xhr.status = 200) {
+								resolve(xhr.response);
+								// console.log(xhr.response);
+								printBoxLogic(xhr.response);
+							}
+							else {
+								reject (
+									Error (
+										xhr.statusText
+									)
+								);
+							}
+						}
+					)
+					xhr.addEventListener('error',
+						function() {
+							reject(
+								Error('Network Error')
+							)
+						}
+					)
+					xhr.open('GET', URL);
+					xhr.send();
+				}
+			)
+		};
+		getData("http://jservice.io/api/categories?count=5&offset=10");
+
+		var catArray = [];
+		function printCategories(json) {
+			var text = JSON.parse(json);
+			var i;
+			for (i = 0; i < text.length; i++) {
+
+			console.log(text);
+				catArray.push(text[i]);
+				var cat = document.createElement('td');
+				cat.innerHTML = text[i].title + '<br>' + "ID: " + text[i].id;
+				document.getElementById('game_header').appendChild(cat);
+			}
+			for (i = 0; i < catArray.length; i++) {
+				var cat = 'http://jservice.io/api/category?id=' + catArray[i].id;
+				console.log("URL: "+cat);
+				getData2(cat);
+			}
+		};
+		function printBoxLogic(json) {
+			var text = JSON.parse(json);
+			console.log("this is already a " + typeof(text));
+			console.log(text);
+			var i;
+			var game_boxes = document.querySelector("#game_boxes");
+			var clone = game_boxes.cloneNode(true);
+			var game_body = document.querySelector("#game_body");
+			game_body.appendChild(clone);
+			// for (i = 0; i < text.length; i++) {
+			// 	console.log("indiv " + text);
+			// 	var box = document.createElement('td');
+			// 	box.innerHTML = '?';
+			// 	clone.appendChild(box);
+			// }
+			for (i = 0; i < text.clues_count; i++) {
+				var box = document.createElement('td');
+				box.innerHTML = "?";
+				clone.appendChild(box);
+			} 
+		};
+
+		// .then(function(res) {
+		// 		console.log("ok!");
+		// })	
+		// 	.catch(function(err) {
+		// 		console.log("bad");
+		// // 	})
+
+	</script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+html, body {
+	background-color: dimgray;
+	color: white;
+	font-family: sans-serif;
+	font-size: 100%;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	text-align: center;
+}
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	margin: 1em auto;
+	width: auto;
+}
+thead td {
+	padding: 0.8em;
+}
+
