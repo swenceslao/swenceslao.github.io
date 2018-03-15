@@ -13,13 +13,43 @@
 			</tr>
 		</thead>
 		<tbody id="game_body">
-			<tr id="game_boxes">
+			<tr id="game_boxes" class="game_boxes">
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+			</tr>
+			<tr id="game_boxes" class="game_boxes">
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+			</tr>
+			<tr id="game_boxes" class="game_boxes">
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+			</tr>
+			<tr id="game_boxes" class="game_boxes">
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+			</tr>
+			<tr id="game_boxes" class="game_boxes">
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
+				<td id="game_box" class="game_box">?</td>
 			</tr>
 		</tbody>
 	</table>
-	<h3></h3>
-	<ul id="category_list">
-	</ul>
 
 	<script type="text/javascript">
 		function getData(URL) {
@@ -86,15 +116,20 @@
 				}
 			)
 		};
-		getData("http://jservice.io/api/categories?count=5&offset=10");
+		getData("http://jservice.io/api/categories?count=5&offset=10")
+		.then(function(res) {
+			console.log("Network ok!");
+		})	
+		.catch(function(err) {
+			// alert('Network error');
+		});
 
 		var catArray = [];
 		function printCategories(json) {
 			var text = JSON.parse(json);
 			var i;
 			for (i = 0; i < text.length; i++) {
-
-			console.log(text);
+				console.log(text);
 				catArray.push(text[i]);
 				var cat = document.createElement('td');
 				cat.innerHTML = text[i].title + '<br>' + "ID: " + text[i].id;
@@ -103,37 +138,61 @@
 			for (i = 0; i < catArray.length; i++) {
 				var cat = 'http://jservice.io/api/category?id=' + catArray[i].id;
 				console.log("URL: "+cat);
-				getData2(cat);
+				getData2(cat)
+				.then(function(res) {
+					console.log('Network OK');
+				})
+				.catch(function(res) {
+					// alert("Network error!");
+				});
 			}
 		};
+
+		var uni;
+		var valuesCatArray = [];
 		function printBoxLogic(json) {
 			var text = JSON.parse(json);
-			console.log("this is already a " + typeof(text));
-			console.log(text);
+			uni = text;
 			var i;
-			var game_boxes = document.querySelector("#game_boxes");
-			var clone = game_boxes.cloneNode(true);
-			var game_body = document.querySelector("#game_body");
-			game_body.appendChild(clone);
-			// for (i = 0; i < text.length; i++) {
-			// 	console.log("indiv " + text);
-			// 	var box = document.createElement('td');
-			// 	box.innerHTML = '?';
-			// 	clone.appendChild(box);
-			// }
-			for (i = 0; i < text.clues_count; i++) {
-				var box = document.createElement('td');
-				box.innerHTML = "?";
-				clone.appendChild(box);
-			} 
+			for (i = 0; i < Object.keys(text).length+1; i++) {
+				valuesCatArray.push(text.clues[i].value);
+			}
+			console.log(text);
+			var game_box_array = document.getElementsByClassName('game_box');
+			var i;
+			var x = 0;
+			var y = 0;
+			for (i = 0; i < game_box_array.length; i++) {
+				game_box_array[i].setAttribute('data-category', catArray[x].id);
+				game_box_array[i].innerHTML = "&euro;" + valuesCatArray[y];
+				game_box_array[i].setAttribute('position', y);
+				game_box_array[i].addEventListener('click', 
+					function(evt) {
+						let el = evt.target;
+						console.log("JSONSearch: " + jsonSearcher(text, el.getAttribute('data-category'), el.getAttribute('position')));
+					}
+				);
+				if (x == 4) {
+					x = 0;
+					y++;
+				}
+				else {
+					x++;
+				}
+			}
 		};
 
-		// .then(function(res) {
-		// 		console.log("ok!");
-		// })	
-		// 	.catch(function(err) {
-		// 		console.log("bad");
-		// // 	})
+		function jsonSearcher(json, cat, position) {
+			var object = json;
+			var i;
+			for (i = 0; i < Object.keys(object).length; i++) {
+				if (object.id == cat) {
+					return object.clues[position].question;
+					break;
+				}
+			}
+			// return object;
+		}
 
 	</script>
 </body>

@@ -17,4 +17,7 @@ table, th, td {
 thead td {
 	padding: 0.8em;
 }
-
+tbody td {
+	padding: 2em;
+	cursor: pointer;
+}
